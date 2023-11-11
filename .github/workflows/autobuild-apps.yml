@@ -2,7 +2,7 @@ name: Build wasi image
 on:
   workflow_dispatch:
 jobs:
-  install-k8s:
+  build-wasi:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -10,6 +10,6 @@ jobs:
       - name: Download buildah and sealos
         run: .github/scripts/download.sh
       - name: After k8s operation
-        working-directory: applications/wasmedge/wasi
+        working-directory: applications/wasmedge/llama2
         run: |
           bash latest.sh
