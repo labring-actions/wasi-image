@@ -1,0 +1,3 @@
+FROM scratch
+COPY quick-start.wasm /
+CMD ["/quick-start.wasm"]
