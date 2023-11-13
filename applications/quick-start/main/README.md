@@ -24,8 +24,6 @@ fn main() {
 
 构建wasi镜像
 ```bash
-
-```
 sealos build --platform "wasi/wasm" -t sealos.hub:5000/quick-start:latest .
 sealos push sealos.hub:5000/quick-start:latest
 ```
