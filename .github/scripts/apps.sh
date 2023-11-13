@@ -4,7 +4,6 @@ set -eu
 
 readonly APP_NAME=${app?}
 readonly APP_VERSION=${version?}
-readonly APP_ARCH=${arch?}
 
 readonly IMAGE_HUB_REGISTRY=${registry?}
 readonly IMAGE_HUB_REPO=${repo?}
@@ -26,21 +25,14 @@ cp -rf "applications/$APP_NAME/$APP_VERSION"/* $buildDir
 cd $buildDir && {
   [[ -s Dockerfile ]] && Kubefile="Dockerfile" || Kubefile="Kubefile"
 
-  if [[ -s "build_arch" ]]; then
-    FILE_CONTENT=$(cat "build_arch"| tr -d '[:space:]'| tr -d '\n'| tr -d '\t')
-    if [[ "$FILE_CONTENT" != "$APP_ARCH" ]]; then
-        echo "The content of build_arch does not match the ARCH variable. Exiting."
-        exit 0
-    fi
-  fi
   if [[ -s init.sh ]]; then
-    bash init.sh "$APP_ARCH" "$APP_NAME" "$APP_VERSION"
+    bash init.sh "$APP_NAME" "$APP_VERSION"
   fi
 
-  IMAGE_NAME="$IMAGE_HUB_REGISTRY/$IMAGE_HUB_REPO/$APP_NAME:$APP_VERSION-$APP_ARCH"
+  IMAGE_NAME="$IMAGE_HUB_REGISTRY/$IMAGE_HUB_REPO/$APP_NAME:$APP_VERSION"
 
   IMAGE_BUILD="${IMAGE_NAME%%:*}:build-$(date +%s)"
-  sudo sealos build -t "$IMAGE_BUILD" --isolation=chroot --platform "linux/$APP_ARCH" -f $Kubefile .
+  sudo sealos build -t "$IMAGE_BUILD" --isolation=chroot --platform "wasi/wasm" -f $Kubefile .
 
   sudo sealos tag "$IMAGE_BUILD" "$IMAGE_NAME" && sudo sealos rmi -f "$IMAGE_BUILD"
 

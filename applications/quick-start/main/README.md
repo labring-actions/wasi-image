@@ -20,7 +20,7 @@ kind: Pod
 metadata:
   name: pod-with-wasm-workload
 spec:
-  runtimeClassName: wasmedge #修改成对应的runtime名字
+  runtimeClassName: runwasi-wasmtime #修改成对应的runtime名字
   containers:
   - name: wasm-container
     image: sealos.hub:5000/quick-start:latest

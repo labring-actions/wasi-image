@@ -1,15 +1,61 @@
 name: Build wasi image
 on:
-  workflow_dispatch:
+  issue_comment:
+    types:
+      - created
 jobs:
-  build-wasi:
+  resolve-issue-var:
+    if: startswith(github.event.comment.body, '/imagebuild_apps')
     runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.set-appversion.outputs.app }}
+      version: ${{ steps.set-appversion.outputs.version }}
+    steps:
+      - name: Write vars
+        id: set-appversion
+        run: |
+          commentbody="${{github.event.comment.body}}"
+          app=`echo "$commentbody"| awk '{print $2}'`
+          version=`echo "$commentbody"| awk '{print $3}'`
+          echo "app=$app" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+  build-wasi:
+    name: Auto build app image
+    needs:
+      - resolve-issue-var
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Download buildah and sealos
         run: .github/scripts/download.sh
-      - name: After k8s operation
-        working-directory: applications/wasmedge/llama2
-        run: |
-          bash latest.sh
+      - name: Build Image
+        env:
+          registry: ${{ vars.D_REGISTRY_NAME }}
+#          username: ${{ vars.D_REGISTRY_REPOSITORY }}
+#          repo: ${{ vars.D_REGISTRY_REPOSITORY }}
+#          password: ${{ secrets.D_REGISTRY_TOKEN }}
+          app: ${{ needs.resolve-issue-var.outputs.app }}
+          version: ${{ needs.resolve-issue-var.outputs.version }}
+        run: .github/scripts/apps.sh
+  add-tips:
+    if: contains(github.event.comment.body, 'imagebuild')
+    needs:
+      - resolve-issue-var
+    name: Auto add tips
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Success Commit
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ```
+            image docker.io/${{ vars.D_REGISTRY_REPOSITORY }}/${{ needs.resolve-issue-var.outputs.app }}:${{ needs.resolve-issue-var.outputs.version }} build successfully!
+            ```
+            
+            See: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
