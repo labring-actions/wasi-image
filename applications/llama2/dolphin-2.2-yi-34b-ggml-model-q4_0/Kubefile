@@ -1,5 +1,7 @@
 FROM scratch
+ENV WASMEDGE_PLUGIN_PATH=${WASMEDGE_PLUGIN_PATH:-"/opt/containerd/lib"}
+ENV WASMEDGE_WASINN_PRELOAD=${WASMEDGE_WASINN_PRELOAD:-"default:GGML:AUTO:/dolphin-2.2-yi-34b-ggml-model-q4_0.gguf"}
 COPY --chmod=0755 llama-api-server.wasm /
 COPY --chmod=0755 llama-chat.wasm /
 COPY dolphin-2.2-yi-34b-ggml-model-q4_0.gguf /
-CMD ["/quick-start.wasm"]
+ENTRYPOINT ["/llama-api-server.wasm"]
