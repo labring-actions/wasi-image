@@ -1,0 +1,5 @@
+FROM scratch
+COPY --chmod=0755 llama-api-server.wasm /
+COPY --chmod=0755 llama-chat.wasm /
+COPY llama-2-7b-chat-q5_k_m.gguf /
+CMD ["/quick-start.wasm"]

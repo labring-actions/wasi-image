@@ -1,0 +1,5 @@
+FROM scratch
+COPY --chmod=0755 llama-api-server.wasm /
+COPY --chmod=0755 llama-chat.wasm /
+COPY dolphin-2.2-yi-34b-ggml-model-q4_0.gguf /
+CMD ["/quick-start.wasm"]
