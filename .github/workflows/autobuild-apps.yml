@@ -33,10 +33,10 @@ jobs:
         run: .github/scripts/download.sh
       - name: Build Image
         env:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          repo: ${{ github.repository_owner }}
-          password: ${{ secrets.GH_PAT }}
+          registry: docker.io
+          username: ${{ vars.D_REGISTRY_REPOSITORY }}
+          repo: ${{ vars.D_REGISTRY_REPOSITORY }}
+          password: ${{ secrets.D_REGISTRY_TOKEN }}
           app: ${{ needs.resolve-issue-var.outputs.app }}
           version: ${{ needs.resolve-issue-var.outputs.version }}
         run: .github/scripts/apps.sh
@@ -44,6 +44,7 @@ jobs:
     if: contains(github.event.comment.body, 'imagebuild')
     needs:
       - resolve-issue-var
+      - build-wasi
     name: Auto add tips
     runs-on: ubuntu-latest
     permissions:
