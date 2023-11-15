@@ -1,6 +1,5 @@
 name: Build wasi image
 on:
-  workflow_dispatch:
   issue_comment:
     types:
       - created
@@ -34,10 +33,10 @@ jobs:
         run: .github/scripts/download.sh
       - name: Build Image
         env:
-          registry: ${{ vars.D_REGISTRY_NAME }}
-#          username: ${{ vars.D_REGISTRY_REPOSITORY }}
-#          repo: ${{ vars.D_REGISTRY_REPOSITORY }}
-#          password: ${{ secrets.D_REGISTRY_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          repo: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_PAT }}
           app: ${{ needs.resolve-issue-var.outputs.app }}
           version: ${{ needs.resolve-issue-var.outputs.version }}
         run: .github/scripts/apps.sh
