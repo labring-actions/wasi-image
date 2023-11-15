@@ -1,11 +1,11 @@
-name: Build wasi image
+name: Build wasi image by cirun
 on:
   issue_comment:
     types:
       - created
 jobs:
   resolve-issue-var:
-    if: startswith(github.event.comment.body, '/imagebuild_apps')
+    if: startswith(github.event.comment.body, '/imagebuild_cirun_apps') &&  github.event.sender.login=='cuisongliu'
     runs-on: ubuntu-latest
     outputs:
       app: ${{ steps.set-appversion.outputs.app }}
@@ -23,7 +23,7 @@ jobs:
     name: Auto build app image
     needs:
       - resolve-issue-var
-    runs-on: ubuntu-latest
+    runs-on: cirun-gcp-amd64--${{ github.run_id }}
     permissions:
       issues: write
     steps:
