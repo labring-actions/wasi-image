@@ -1,10 +1,11 @@
 runners:
   - name: "cirun-gcp-amd64"
     cloud: "gcp"
-    machine_image: "sealos-dev:cirun-action-podman"  # YOUR-PROJECT-NAME:MACHINE-IMAGE-NAME
+    machine_image: "sealos-dev:cirun-action-podman-centos-500g"  # YOUR-PROJECT-NAME:MACHINE-IMAGE-NAME
     instance_type:
       - "e2-highmem-2"
-      - "e2-custom-2-16384"
+      - "e2-custom-4-16384"
+      - "e2-highmem-4"
     labels:
       - "cirun-gcp-amd64"
     region:
@@ -14,3 +15,9 @@ runners:
       - "asia-east2-a"
       - "asia-east2-b"
       - "asia-east2-c"
+      - "us-west1-b"
+      - "us-west1-a"
+      - "us-west1-c"
+      - "us-west2-b"
+      - "us-west2-a"
+      - "us-west2-c"
